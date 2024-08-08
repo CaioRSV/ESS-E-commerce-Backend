@@ -122,7 +122,7 @@ const seedCustomer = async (prisma: PrismaClient): Promise<void> => {
         price: 50.5,
         stock: 50,
         categoryId: TenisCategory.id,
-        description: 'Produto A description',
+        description: 'Produto A description'
       },
     });
 
@@ -131,6 +131,19 @@ const seedCustomer = async (prisma: PrismaClient): Promise<void> => {
         name: 'Produto A',
       },
     });
+
+    const newMedia = await prisma.media.create({
+      data: {
+        url: "https://i.pinimg.com/564x/fb/a9/d6/fba9d6e3f87a56403d204c6e99c605b0.jpg"
+      }
+    })
+
+    await prisma.productMedia.create({
+      data: {
+        productId: newProduct.id,
+        mediaId: newMedia.id
+      }
+    })
 
     console.log('Seeding Test User cart');
 
@@ -180,6 +193,89 @@ const seedCustomer = async (prisma: PrismaClient): Promise<void> => {
         quantity: 1,
       },
     });
+
+    // Fazendo seed de itens não necessários para testes, mas úteis para visualização geral do projeto em setup
+
+    console.log('Seeding other products');
+
+    await prisma.category.create({
+      data: {
+        name: 'Sapatos',
+        Media: {
+          create: {
+            url: "https://i.imgur.com/Qo3e2D6.png"
+          }
+        }
+      },
+    });
+
+    const SapatosCategory = await prisma.category.findUnique({
+      where: {
+        name: 'Sapatos',
+      },
+    });
+
+    await prisma.product.create({
+      data: {
+        name: 'Sapato Masculino - Preto',
+        price: 334,
+        stock: 50,
+        categoryId: SapatosCategory.id,
+        description: 'Sapato masculino social, linha conforto - 1709 Preto'
+      },
+    });
+
+    const sapatoMasculino = await prisma.product.findFirst({
+      where: {
+        name: 'Sapato Masculino - Preto',
+      },
+    });
+
+    const SM_Media = await prisma.media.create({
+      data: {
+        url: "https://cdn.shoppub.io/cdn-cgi/image/w=1000,h=1000,q=80,f=auto/difranca/media/uploads/produtos/foto/hxuuhwaz/sapato-masculino-linha-conforto-de-pelica-asa-calcados-1709-preto-par-de-frente-e-de-lado.jpg"
+      }
+    })
+
+    await prisma.productMedia.create({
+      data: {
+        productId: sapatoMasculino.id,
+        mediaId: SM_Media.id
+      }
+    })
+
+    //
+
+    await prisma.product.create({
+      data: {
+        name: 'Sapato Feminino Mocassim',
+        price: 187,
+        stock: 50,
+        categoryId: SapatosCategory.id,
+        description: 'Sapato feminino Mocassim tratorado'
+      },
+    });
+
+    const sapatoFeminino = await prisma.product.findFirst({
+      where: {
+        name: 'Sapato Feminino Mocassim',
+      },
+    });
+
+    const SF_Media = await prisma.media.create({
+      data: {
+        url: "https://cdn.shoppub.io/cdn-cgi/image/w=1000,h=1000,q=80,f=auto/sandromoscoloni/media/uploads/produtos/foto/iuimcdcg/file.png"
+      }
+    })
+
+    await prisma.productMedia.create({
+      data: {
+        productId: sapatoFeminino.id,
+        mediaId: SF_Media.id
+      }
+    })
+
+
   }
 };
 
